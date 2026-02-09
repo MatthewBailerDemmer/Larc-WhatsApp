@@ -1,0 +1,60 @@
+import socket
+import threading
+import time   
+
+
+
+class ClientSocket:
+    def __init__(self, HOST, PORT, userId, password):
+        self.HOST = HOST
+        self.PORT = PORT
+        self.userId = userId
+        self.password = password
+        self.stop_event = threading.Event()
+        self.threadKeepAlive = threading.Thread(target=self.KeepAlive, args=(self.stop_event,))
+
+
+
+    def KeepAlive(self, stop_event):
+        while not stop_event.is_set():
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect((self.HOST, self.PORT))
+                msg = f"GET USERS {self.userId}:{self.password}\r\n"
+                s.sendall(msg.encode("ascii"))
+                data = s.recv(1024)
+                print(f"Logged In: {data.decode("utf-8")!r}")
+                time.sleep(6)
+
+
+    def log_in(self):
+        self.threadKeepAlive.start()
+    def log_out(self):
+        self.stop_event.set()
+        self.threadKeepAlive.join()
+
+    def get_messages(self):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((self.HOST, self.PORT))
+            msg = f"GET MESSAGE {self.userId}:{self.password}\r\n"
+            s.sendall(msg.encode("ascii"))
+            data = s.recv(1024)
+            print(f"Messages received: {data.decode("utf-8")!r}")
+
+    def send_message(self, user2Id, sending):
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.settimeout(5)
+            msg = f"SEND MESSAGE {self.userId}:{self.password}:{user2Id}:{sending}\r\n".encode("ascii")
+            s.sendto(msg ,(self.HOST, 1011))
+            try:
+                data, addr = s.recvfrom(1024)
+                print(f"Sent message: {data.decode("utf-8")!r}")
+            except socket.timeout:
+                print("No message received from server")
+
+    def get_players(self):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((self.HOST, self.PORT))
+            msg = f"GET PLAYERS {self.userId}:{self.password}\r\n"
+            s.sendall(msg.encode("ascii"))
+            data = s.recv(1024)
+            print(f"Messages received: {data.decode("utf-8")!r}")
