@@ -57,4 +57,23 @@ class ClientSocket:
             msg = f"GET PLAYERS {self.userId}:{self.password}\r\n"
             s.sendall(msg.encode("ascii"))
             data = s.recv(1024)
-            print(f"Messages received: {data.decode("utf-8")!r}")
+            print(f"Players: {data.decode("utf-8")!r}")
+
+    def get_card(self):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((self.HOST, self.PORT))
+            msg = f"GET CARD {self.userId}:{self.password}\r\n"
+            s.sendall(msg.encode("ascii"))
+            data = s.recv(1024)
+            print(f"Players: {data.decode("utf-8")!r}")
+
+    def send_message_game(self, msg):
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.settimeout(5)
+            msg = f"SEND GAME {self.userId}:{self.password}:{msg}\r\n".encode("ascii")
+            s.sendto(msg ,(self.HOST, 1011))
+            try:
+                data, addr = s.recvfrom(1024)
+                print(f"Sent message: {data.decode("utf-8")!r}")
+            except socket.timeout:
+                print("No message received from server")

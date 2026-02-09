@@ -13,6 +13,10 @@ client.log_in()
 time.sleep(15)
 
 while True:
-    client.send_message(0, "fala aew")
-    time.sleep(3)
-    client.get_messages()
+    option = int(input(f"1 para entrar no jogo\nn2 para parar\n3 para sair do jogo"))
+    if option == 1:
+        client.send_message_game("ENTER")
+    elif option == 2:
+        client.send_message_game("STOP")
+    elif option == 3:
+        client.send_message_game("QUIT")
