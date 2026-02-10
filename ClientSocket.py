@@ -22,6 +22,15 @@ class ClientSocket:
                 msg = f"GET USERS {self.userId}:{self.password}\r\n"
                 s.sendall(msg.encode("ascii"))
                 data = s.recv(1024)
+                #print(f"Logged In: {data.decode("utf-8")!r}")
+                time.sleep(6)
+                
+    def get_score(self):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect((self.HOST, self.PORT))
+                msg = f"GET USERS {self.userId}:{self.password}\r\n"
+                s.sendall(msg.encode("ascii"))
+                data = s.recv(1024)
                 print(f"Logged In: {data.decode("utf-8")!r}")
                 time.sleep(6)
 
@@ -65,7 +74,7 @@ class ClientSocket:
             msg = f"GET CARD {self.userId}:{self.password}\r\n"
             s.sendall(msg.encode("ascii"))
             data = s.recv(1024)
-            print(f"Players: {data.decode("utf-8")!r}")
+            print(f"CARD: {data.decode("utf-8")!r}")
 
     def send_message_game(self, msg):
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
