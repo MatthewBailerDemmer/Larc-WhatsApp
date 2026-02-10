@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logged Users</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .container {
+            width: 400px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .container h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        ul.user-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul.user-list li {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        ul.user-list li:last-child {
+            border-bottom: none;
+        }
+
+        .empty {
+            text-align: center;
+            color: #777;
+            font-style: italic;
+        }
+
+        /* CHAT */
+        .chat-container {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+
+        .chat-container h3 {
+            text-align: center;
+            margin: 0 0 10px 0;
+        }
+
+        .chat-box {
+            height: 150px;
+            border: 1px solid #ddd;
+            padding: 6px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            font-size: 14px;
+            background: #fafafa;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 5px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 6px;
+        }
+
+        .chat-input button {
+            padding: 6px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        function selectUser(liElement) {
+            const text = liElement.textContent;
+
+            // Exemplo: redirecionar passando como parâmetro
+            window.location.href = "?user=" + text;
+        }
+        </script>
+
+<div class="container">
+    <h2>Logged Users</h2>
+
+    {% if logged_users %}
+        <ul class="user-list">
+            {% for user in logged_users %}
+                 <li onclick="selectUser(this)">{{ user }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="empty">No users logged in</div>
+    {% endif %}
+
+    <!-- CHAT -->
+    <div class="chat-container">
+        {% if message_user %}
+        <h3>Conversa com: {{ message_user }}</h3>
+        {% else %}
+        <h3>Selecione alguem para mandar mensagem</h3>
+        {% endif %}
+
+        <div class="chat-box">
+            <!-- mensagens renderizadas pelo backend futuramente -->
+        </div>
+
+        <div class="chat-input">
+            <input type="text" placeholder="Digite sua mensagem">
+            <button type="submit">Enviar</button>
+        </div>
+    </div>
+</div>
+
+<!-- 🔁 RELOAD (MANTIDO) -->
+<script>
+    setTimeout(function () {
+        window.location.href = window.location.href;
+    }, 6000); // 6 segundos
+</script>
+
+</body>
+</html>

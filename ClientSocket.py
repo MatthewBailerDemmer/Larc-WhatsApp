@@ -32,7 +32,7 @@ class ClientSocket:
                 s.sendall(msg.encode("ascii"))
                 data = s.recv(1024)
                 print(f"Logged In: {data.decode("utf-8")!r}")
-                time.sleep(6)
+                return data.decode("utf-8")
 
 
     def log_in(self):
