@@ -34,11 +34,70 @@ body {
 .container h2 {
     margin-top: 0;
     text-align: center;
-    color: #d4af37; /* dourado */
+    color: #d4af37;
     letter-spacing: 1px;
 }
 
-/* USER LIST */
+/* ============================= */
+/* USER TABLE + PLAYER LIST */
+/* ============================= */
+
+.user-table-container {
+    margin-top: 10px;
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+
+.user-table thead {
+    background: linear-gradient(45deg, #3a0000, #5a0000);
+}
+
+.user-table th {
+    padding: 12px;
+    text-align: left;
+    color: #d4af37;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #d4af37;
+}
+
+.user-table th:last-child,
+.user-table td:last-child {
+    text-align: right;
+}
+
+.user-table tbody tr {
+    background: #121212;
+    transition: 0.3s;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.user-table tbody tr:hover {
+    background: #1f0000;
+}
+
+.user-table td {
+    padding: 12px;
+}
+
+.user-table a {
+    text-decoration: none;
+    color: #ffffff;
+    display: block;
+    width: 100%;
+    transition: 0.3s;
+}
+
+.user-table a:hover {
+    color: #d4af37;
+}
+
+/* PLAYER LIST */
+
 ul.user-list {
     list-style: none;
     padding: 0;
@@ -46,18 +105,25 @@ ul.user-list {
 }
 
 ul.user-list li {
-    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    background: #121212;
     border-bottom: 1px solid #2a2a2a;
-}
-
-ul.user-list li a {
-    text-decoration: none;
-    color: #ffffff;
     transition: 0.3s;
 }
 
-ul.user-list li a:hover {
+ul.user-list li:hover {
+    background: #1f0000;
+}
+
+.player-name {
+    color: #ffffff;
+}
+
+.player-score {
     color: #d4af37;
+    font-weight: bold;
 }
 
 .empty {
@@ -66,7 +132,10 @@ ul.user-list li a:hover {
     font-style: italic;
 }
 
+/* ============================= */
 /* CHAT */
+/* ============================= */
+
 .chat-container {
     margin-top: 20px;
     border-top: 1px solid #3a0000;
@@ -93,7 +162,6 @@ ul.user-list li a:hover {
     box-shadow: inset 0 0 15px rgba(255,0,0,0.1);
 }
 
-/* MESSAGE BASE */
 .message {
     max-width: 75%;
     padding: 10px 14px;
@@ -104,14 +172,12 @@ ul.user-list li a:hover {
     font-size: 14px;
 }
 
-/* RECEIVED */
 .received {
     align-self: flex-start;
     background: #2a0000;
     border-left: 3px solid #d4af37;
 }
 
-/* SENT */
 .sent {
     align-self: flex-end;
     background: #003300;
@@ -129,6 +195,7 @@ ul.user-list li a:hover {
 }
 
 /* INPUT */
+
 .chat-input {
     display: flex;
     gap: 6px;
@@ -158,7 +225,10 @@ ul.user-list li a:hover {
     transform: scale(1.05);
 }
 
+/* ============================= */
 /* GAME CONTROLS */
+/* ============================= */
+
 .game-controls {
     margin-top: 10px;
 }
@@ -186,7 +256,10 @@ ul.user-list li a:hover {
     transform: scale(1.05);
 }
 
-/* CARD IMAGE AREA */
+/* ============================= */
+/* CARD IMAGE */
+/* ============================= */
+
 .card-area {
     display: flex;
     justify-content: center;
@@ -194,11 +267,10 @@ ul.user-list li a:hover {
     margin: 20px 0;
 }
 
-/* CARD IMAGE STYLE */
 .card-image {
-    width: 180px;              /* maior que antes */
+    width: 180px;
     border-radius: 12px;
-    border: 3px solid #d4af37; /* dourado cassino */
+    border: 3px solid #d4af37;
     box-shadow: 
         0 0 25px rgba(0,0,0,0.9),
         0 0 15px rgba(212,175,55,0.4);
@@ -216,77 +288,102 @@ ul.user-list li a:hover {
 </head>
 <body>
 
+    <script>
+    window.addEventListener("load", function () {
+        const input = document.getElementById("focus_input");
+        if (input) {
+            input.focus();
+        }
+    });
+</script>
+
 <div class="wrapper">
 
-    <!-- PRIMEIRO CONTAINER -->
+    <!-- LEFT CONTAINER -->
     <div class="container">
         <h2>♠ Logged Users ♣</h2>
 
         {% if logged_users %}
-            <ul class="user-list">
-                {% for user in logged_users %}
-                     <li>
-                        <a href="{{url_for('get_all_posts', user=user[1], userId=user[0], card=card)}}">
-                            {{ user[1] }}
-                        </a>
-                     </li>
-                {% endfor %}
-            </ul>
+        <div class="user-table-container">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in logged_users %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('get_all_posts', user=user[1], userId=user[0], card=card) }}">
+                                {{ user[1] }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('get_all_posts', user=user[1], userId=user[0], card=card) }}">
+                                {{ user[2] }}
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         {% else %}
             <div class="empty">No users logged in</div>
         {% endif %}
 
         <div class="chat-container">
             
-            {% if message_user  and message_user != "None" %}
-            <h3>🎰 Conversa com: {{ message_user }}</h3>
+            {% if message_user and message_user != "None" %}
+                <h3>🎰 Conversa com: {{ message_user }}</h3>
             {% else %}
-            <h3>Selecione alguem para mandar mensagem</h3>
+                <h3>Selecione alguem para mandar mensagem</h3>
             {% endif %}
 
             <div class="chat-box">
 
                 {% if received_message and received_message|length >= 2 and received_message != "None" %}
                     <div class="message received">
-                        <div class="sender-name">
-                            {{ received_message[0] }}
-                        </div>
-                        <div class="message-text">
-                            {{ received_message[1] }}
-                        </div>
+                        <div class="sender-name">{{ received_message[0] }}</div>
+                        <div class="message-text">{{ received_message[1] }}</div>
                     </div>
                 {% endif %}
 
                 {% if sent_message and sent_message != "None" %}
                     <div class="message sent">
-                        <div class="message-text">
-                            {{ sent_message }}
-                        </div>
+                        <div  id="chave" class="message-text">{{ sent_message }}</div>
                     </div>
                 {% endif %}
 
             </div>
 
             <div class="chat-input">
-                <form action="{{ url_for('sendMessage') }}">
+                <form id="message" action="{{ url_for('get_all_posts') }}">
                     <input type="hidden" name="card" value="{{ card }}">
                     <input type="hidden" name="user" value="{{ message_user }}">
                     <input type="hidden" name="userId" value="{{ message_userId }}">
-                    <input type="text" placeholder="Digite sua mensagem" name="sent_message">
+                    <input type="hidden" name="flag" value="N">
+                    <input type="hidden" name="sent_message" value="{{ sent_message }}">
+                    <input type="text" id="focus_input" placeholder="Digite sua mensagem" name="temp_message" value="{{ temp }}">
                     <button type="submit">Enviar</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- SEGUNDO CONTAINER -->
+    <!-- RIGHT CONTAINER -->
     <div class="container">
         <h2>🃏 Jogadores Online</h2>
 
         {% if players %}
             <ul class="user-list">
                 {% for player in players %}
-                     <li>{{ player[0] }} : {{ player[1] }}</li>
+                    <li>
+                        <span class="player-name">{{ player[0] }}</span>
+                        <span class="player-score">{{ player[1] }}</span>
+                    </li>
                 {% endfor %}
             </ul>
         {% else %}
@@ -300,13 +397,13 @@ ul.user-list li a:hover {
             <div class="card-area">
                 <img 
                     class="card-image"
-                    src="{{ url_for('static', filename='images/' + card + '.png') }}" alt="{{card}}">
+                    src="{{ url_for('static', filename='images/' + card + '.png') }}" 
+                    alt="{{card}}">
             </div>
             {% endif %}
 
-
             <div class="game-controls">
-                <form action="{{ url_for('sendMessage') }}">
+                <form action="{{ url_for('get_all_posts') }}">
                     <input type="hidden" name="user" value="{{ message_user }}">
                     <input type="hidden" name="userId" value="{{ message_userId }}">
                     <input type="hidden" name="sent_message" value="{{ sent_message }}">
@@ -323,10 +420,23 @@ ul.user-list li a:hover {
 </div>
 
 <script>
-    setTimeout(function () {
-        window.location.href = window.location.href;
+    setInterval(function () {
+        const form = document.getElementById("message");
+        if (!form) return;
+
+        // Atualiza flag para "S"
+        const flagInput = form.querySelector("input[name='flag']");
+        if (flagInput) {
+            flagInput.value = "S";
+        }
+
+        form.submit();
     }, 6000);
 </script>
+
+
+
+
 
 </body>
 </html>

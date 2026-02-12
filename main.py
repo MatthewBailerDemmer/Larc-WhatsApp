@@ -36,8 +36,6 @@ def players_front(players, result):
     while i < len(players) - 1:
         name = ''
         for seila in result:
-            print(seila[0])
-            print(players[i])
             if seila[0] == players[i]:
                 name = seila[1]
                 break
@@ -80,7 +78,17 @@ def login():
     return render_template("login.html")
 
 
+def treatLoggedIn(logged_in):
+    result = []
+    i = 0
+    while i < len(logged_in) - 2:
+        tuplezinha  = (logged_in[i], logged_in[i + 1], logged_in[i + 2])
+        result.append(tuplezinha)
+        i += 3
 
+    result.append((0, "Todos"))
+
+    return result
 
 @app.route('/whatsapp')
 def get_all_posts():
@@ -89,18 +97,22 @@ def get_all_posts():
     logged_in = client.get_score().split(':')
     last_card = request.args.get("card")
     game_action = request.args.get("action")
-    result = []
     sent_message = request.args.get("sent_message")
+    temp_message = ""
+    if request.args.get("temp_message") != None:
+        temp_message = request.args.get("temp_message")
+    flag = request.args.get("flag")
+
+    print(flag)
+    if flag == "N":
+        sent_message = temp_message
+        temp_message = ""
 
     received_messagez = client.get_messages().split(":")
 
-    i = 0
-    while i < len(logged_in) - 1:
-        tuplezinha  = (logged_in[i], logged_in[i + 1])
-        result.append(tuplezinha)
-        i += 3
+   
 
-    result.append((0, "Todos"))
+    result = treatLoggedIn(logged_in)
 
     received_message = (getName( result,received_messagez[0]), received_messagez[1])
 
@@ -112,41 +124,7 @@ def get_all_posts():
 
     card = render_car(game_action, last_card)
 
-    return render_template("index.html", logged_users=result, message_user=user, message_userId=userId, sent_message=sent_message, received_message=received_message, players=players_ret, card=card)
-
-
-@app.route('/whatsapp')
-def sendMessage():
-    user = request.args.get("user")
-    userId = request.args.get("userId")
-    game_action = request.args.get("action")
-    last_card = request.args.get("card")
-    logged_in = client.get_score().split(':')
-    result = []
-    sent_message = request.args.get("sent_message")
-
-    if sent_message is not None and sent_message != "":
-        client.send_message(userId, sent_message)
-
-    received_messagez = client.get_messages().split(":")
-    received_message = (getName(received_messagez[0]), received_messagez[1])
-
-    i = 0
-    while i < len(logged_in) - 1:
-        tuplezinha  = (logged_in[i], logged_in[i + 1])
-        result.append(tuplezinha)
-        i += 3
-
-    result.append((0, "Todos"))
-
-    players = client.get_players().split(":")
-
-    players_ret = players_front(players, result)
-
-    card = render_car(game_action, last_card)
-
-    return render_template("index.html", logged_users=result, message_user=user, message_userId=userId, sent_message=sent_message, received_message=received_message, players=players_ret, card=card)
-        
+    return render_template("index.html", logged_users=result, message_user=user, message_userId=userId, sent_message=sent_message, received_message=received_message, players=players_ret, card=card, temp=temp_message)     
 
 
 if __name__ == "__main__":
